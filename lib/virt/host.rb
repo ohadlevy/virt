@@ -16,7 +16,9 @@ module Virt
     end
 
     def running_guests
-      find_guest_by_id connection.list_domains
+      connection.list_domains.map do |domain|
+        find_guest_by_id(connection.list_domains)
+      end
     end
 
     def defined_guests
@@ -47,9 +49,9 @@ module Virt
       connection.list_storage_pools.map {|p| Pool.new({:name => p})}
     end
 
-    # Returns a Libvirt::StoragePool object based on the pool name
+    # Returns a Virt::Pool object based on the pool name
     def storage_pool pool
-      Pool.new({:name => connection.lookup_storage_pool_by_name(pool).name})
+      Pool.new({:name => pool.is_a?(Libvirt::StoragePool) ? pool.name : pool })
     rescue Libvirt::RetrieveError
     end
 
@@ -60,11 +62,6 @@ module Virt
         pools[storage.name] = storage.volumes
       end
       pools
-    end
-
-    def create guest, opts = {}
-      raise "Must provide a guest" unless guest.is_a?(Virt::Guest)
-      connection.define_domain_xml guest.xml
     end
 
     def find_guest_by_name name

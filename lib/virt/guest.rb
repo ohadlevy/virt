@@ -23,34 +23,36 @@ module Virt
     end
 
     def save
-      @connection.connection.define_domain_xml xml
-      fetch_guest
+      @domain = @connection.connection.define_domain_xml(xml)
+      fetch_info
       !new?
     end
 
     def start
       raise "Guest not created, can't start" if new?
       @domain.create
+      running?
     end
 
     def running?
-      false if new?
+      return false if new?
       @domain.active?
     end
 
     def stop
       raise "Guest not created, can't stop" if new?
       @domain.destroy
+      !running?
     rescue Libvirt::Error
       # domain is not running
       true
     end
 
-    def destroy opts
+    def destroy
       return true if new?
       stop if running?
-      #vol = host.volume host.default_storage_pool_name, guest.image_name
-      @domain.undefine
+      @domain = @domain.undefine
+      new?
     end
 
     def uuid
@@ -60,15 +62,19 @@ module Virt
     private
 
     def fetch_guest
-      if @domain = @connection.connection.lookup_domain_by_name(name)
-        @xml_desc = @domain.xml_desc
-        @memory   = @domain.max_memory
-        @vcpu     = document("domain/vcpu")
-        @arch     = document("domain/os/type", "arch")
-        @mac      = document("domain/devices/interface/mac", "address")
-      end
-      @domain
+      @domain = @connection.connection.lookup_domain_by_name(name)
+      fetch_info
     rescue Libvirt::RetrieveError
+    end
+
+    def fetch_info
+      return if @domain.nil?
+      @xml_desc = @domain.xml_desc
+      @memory   = @domain.max_memory
+      @vcpu     = document("domain/vcpu")
+      @arch     = document("domain/os/type", "arch")
+      @mac      = document("domain/devices/interface/mac", "address")
+      interface.mac = @mac
     end
 
     def default_memory_size

@@ -4,9 +4,12 @@ class Virt::HostTest < Test::Unit::TestCase
 
   def setup
     hostname = "h01.sat.lab"
-    hostname = "192.168.2.93"
     uri = "qemu+ssh://root@#{hostname}/system"
     @host = Virt.connect(uri).host
+  end
+
+  def test_should_have_a_name
+    assert_kind_of String, @host.name
   end
 
   def test_should_return_running_guests
@@ -23,6 +26,10 @@ class Virt::HostTest < Test::Unit::TestCase
 
   def test_should_return_networks
     assert @host.networks
+  end
+
+  def test_should_return_a_storage_pool
+    assert_kind_of Virt::Pool, @host.storage_pool("default")
   end
 
   def test_should_return_storage_pools
