@@ -74,7 +74,7 @@ module Virt
       @vcpu     = document("domain/vcpu")
       @arch     = document("domain/os/type", "arch")
       @mac      = document("domain/devices/interface/mac", "address")
-      interface.mac = @mac
+      interface.mac = @mac if @mac
     end
 
     def default_memory_size

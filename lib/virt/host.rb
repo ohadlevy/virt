@@ -17,7 +17,7 @@ module Virt
 
     def running_guests
       connection.list_domains.map do |domain|
-        find_guest_by_id(connection.list_domains)
+        find_guest_by_id(domain)
       end
     end
 
