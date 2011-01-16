@@ -30,13 +30,19 @@ module Virt
 
     def start
       raise "Guest not created, can't start" if new?
-      @domain.create
+      @domain.create unless running?
       running?
     end
 
     def running?
       return false if new?
       @domain.active?
+    rescue 
+      # some versions of libvirt do not support checking for active state
+      @connection.connection.list_domains.each do |did|
+        return true if @connection.connection.lookup_domain_by_id(did).name == name
+      end
+      false
     end
 
     def stop
@@ -74,7 +80,7 @@ module Virt
       @vcpu     = document("domain/vcpu")
       @arch     = document("domain/os/type", "arch")
       @mac      = document("domain/devices/interface/mac", "address")
-      interface.mac = @mac if @mac
+      @interface.mac = @mac if @interface
     end
 
     def default_memory_size
