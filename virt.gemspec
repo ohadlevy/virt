@@ -40,7 +40,8 @@ Gem::Specification.new do |s|
     "test/interface_test.rb",
     "test/pool_test.rb",
     "test/test_helper.rb",
-    "test/volume_test.rb"
+    "test/volume_test.rb",
+    "virt.gemspec"
   ]
   s.homepage = %q{https://github.com/ohadlevy/virt}
   s.licenses = ["GPLv3"]
