@@ -1,0 +1,82 @@
+= virt
+
+Simple to use ruby interface to libvirt.
+
+Libvirt is located at http://libvirt.org/ruby
+
+== Contributing
+
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+== RDOC
+
+for full API please visit http://rdoc.info/github/ohadlevy/virt
+
+== Examples
+
+=== Connectivity Options
+  uri = "qemu:///system"              # libvirt running locally
+  uri = "qemu:/fqdn//system"          # used for QEMU+TLS connection
+  uri = "qemu+ssh:/user@fqdn//system" # used for SSH connection
+  uri = "qemu+tcp:/fqdn//system"      # used for non secured tcp connection
+
+==== Establish the connection
+  conn = Virt.connect(uri)
+
+==== get the hypervisor
+  host = conn.host
+
+==== get the list of running guests
+  host.running_guests
+
+==== get the list of stopped guests
+  host.defined_guests
+
+====or a simple hash of both
+  host.guests
+
+==== create a new guest
+
+  guest=Virt::Guest.new({:name => "test123"})
+  guest.vcpu = 2
+  guest.volume.size = 10 # in GB
+
+  guest.save
+  guest.start
+
+  puts guest.mac
+
+  guest.stop
+Many more options exists, make sure checkout the api/tests
+
+==== list of host bridges
+  host.interfaces # physical interfaces
+  host.networks   # virtual / NAT interfaces
+
+==== Storage
+
+  host.storage_pools
+
+  host.volumes
+
+
+
+== Copyright
+Copyright (c) 2011 Ohad Levy
+
+This program and entire repository is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
