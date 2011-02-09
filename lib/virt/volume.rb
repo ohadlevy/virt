@@ -1,7 +1,7 @@
 module Virt
   class Volume
     include Virt::Util
-    attr_reader :name, :pool, :path, :type, :allocated_size, :size, :template_path, :key
+    attr_reader :name, :pool, :type, :allocated_size, :size, :template_path, :key
 
     def initialize options = {}
       @connection     = Virt.connection

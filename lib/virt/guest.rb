@@ -1,21 +1,22 @@
 module Virt
   class Guest
     include Virt::Util
-    attr_reader :name, :xml_desc
-    attr_accessor :memory, :vcpu, :arch, :volume, :interface, :template_path
+    attr_reader :name, :xml_desc, :arch
+    attr_accessor :memory, :vcpu, :volume, :interface, :template_path
 
     def initialize options = {}
-    @connection = Virt.connection
-    @name       = options[:name]   || raise("Must provide a name")
-    # If our domain exists, we ignore the provided options and defaults
-    fetch_guest
-    @memory ||= options[:memory] || default_memory_size
-    @vcpu   ||= options[:vcpu]   || default_vcpu_count
-    @arch   ||= options[:arch]   || default_arch
+      @connection = Virt.connection
+      @name       = options[:name]   || raise("Must provide a name")
 
-    @template_path = options[:template_path] || default_template_path
-    @volume        = Volume.new options
-    @interface     = Interface.new options.merge({:mac => @mac})
+      # If our domain exists, we ignore the provided options and defaults
+      fetch_guest
+      @memory    ||= options[:memory] || default_memory_size
+      @vcpu      ||= options[:vcpu]   || default_vcpu_count
+      self.arch  ||= options[:arch]   || default_arch
+
+      @template_path = options[:template_path] || default_template_path
+      @volume        = Volume.new options
+      @interface     = Interface.new options.merge({:mac => @mac})
     end
 
     def new?
@@ -37,7 +38,7 @@ module Virt
     def running?
       return false if new?
       @domain.active?
-    rescue 
+    rescue
       # some versions of libvirt do not support checking for active state
       @connection.connection.list_domains.each do |did|
         return true if @connection.connection.lookup_domain_by_id(did).name == name
@@ -63,6 +64,10 @@ module Virt
 
     def uuid
       @domain.uuid unless new?
+    end
+
+    def arch= value
+      @arch = value == "i386" ? "i686" : value
     end
 
     private

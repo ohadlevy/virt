@@ -9,6 +9,11 @@ class Virt::GuestTest < Test::Unit::TestCase
     @guest = Virt::Guest.new({:name => "test-host-#{Time.now.to_i}"})
   end
 
+  def teardown
+    @guest.destroy
+    Virt.connection.disconnect unless Virt.connection.closed?
+  end
+
   def test_should_be_new
     assert @guest.new?
     assert @guest.interface.new?
@@ -19,7 +24,14 @@ class Virt::GuestTest < Test::Unit::TestCase
     assert @guest.save
     assert !@guest.interface.new?
     assert_not_nil @guest.interface.mac
-    @guest.destroy
+  end
+
+  def test_should_be_able_to_save_32bit_guest
+    @guest.arch = "i386"
+    assert_equal @guest.arch, "i686"
+    assert @guest.save
+    assert !@guest.interface.new?
+    assert_not_nil @guest.interface.mac
   end
 
   def test_should_be_able_to_destroy
