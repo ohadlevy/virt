@@ -10,7 +10,7 @@ module Virt
       @allocated_size = options[:allocated_size] || default_allocated_size
       @template_path  = options[:template_path]  || default_template_path
       @size           = options[:size]           || default_size
-      @pool           = @connection.host.storage_pool(options[:pool] || "default")
+      @pool           = options[:pool].nil? ? @connection.host.storage_pools.first : @connection.host.storage_pool(options[:pool])
       fetch_volume
     end
 
