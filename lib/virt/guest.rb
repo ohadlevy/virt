@@ -1,22 +1,22 @@
 module Virt
   class Guest
     include Virt::Util
-    attr_reader :name, :xml_desc, :arch
+    attr_reader :name, :xml_desc, :arch, :current_memory, :type, :boot_device, :machine
     attr_accessor :memory, :vcpu, :volume, :interface, :template_path
 
     def initialize options = {}
       @connection = Virt.connection
-      @name       = options[:name]   || raise("Must provide a name")
+      @name = options[:name] || raise("Must provide a name")
 
       # If our domain exists, we ignore the provided options and defaults
       fetch_guest
-      @memory    ||= options[:memory] || default_memory_size
-      @vcpu      ||= options[:vcpu]   || default_vcpu_count
-      self.arch  ||= options[:arch]   || default_arch
+      @memory ||= options[:memory] || default_memory_size
+      @vcpu   ||= options[:vcpu]   || default_vcpu_count
+      @arch   ||= options[:arch]   || default_arch
 
       @template_path = options[:template_path] || default_template_path
       @volume        = Volume.new options
-      @interface     = Interface.new options.merge({:mac => @mac})
+      @interface   ||= Interface.new options
     end
 
     def new?
@@ -70,6 +70,14 @@ module Virt
       @arch = value == "i386" ? "i686" : value
     end
 
+    def to_s
+      name.to_s
+    end
+
+    def <=> other
+      self.name <=> other.name
+    end
+
     private
 
     def fetch_guest
@@ -80,12 +88,25 @@ module Virt
 
     def fetch_info
       return if @domain.nil?
-      @xml_desc = @domain.xml_desc
-      @memory   = @domain.max_memory
-      @vcpu     = document("domain/vcpu")
-      @arch     = document("domain/os/type", "arch")
-      @mac      = document("domain/devices/interface/mac", "address")
-      @interface.mac = @mac if @interface
+      @xml_desc       = @domain.xml_desc
+      @memory         = @domain.max_memory
+      @current_memory = document("domain/currentMemory") if running?
+      @type           = document("domain", "type")
+      @vcpu           = document("domain/vcpu")
+      @arch           = document("domain/os/type", "arch")
+      @machine        = document("domain/os/type", "machine")
+      @boot_device    = document("domain/os/boot", "dev")
+
+      # do we have a NIC?
+      network_type = document("domain/devices/interface", "type") rescue nil
+
+      unless network_type.nil?
+        @interface       ||= Interface.new
+        @interface.type    = network_type
+        @interface.mac     = document("domain/devices/interface/mac", "address")
+        @interface.device  = document("domain/devices/interface/source", "bridge")  if @interface.type == "bridge"
+        @interface.network = document("domain/devices/interface/source", "network") if @interface.type == "network"
+     end
     end
 
     def default_memory_size

@@ -1,6 +1,6 @@
 module Virt
   class Interface
-    attr_accessor  :mac, :model, :type, :device
+    attr_accessor  :mac, :model, :type, :device, :network
 
     def initialize options = {}
       @connection = Virt.connection
@@ -8,6 +8,7 @@ module Virt
       @type       = options[:type]   || default_type
       @model      = options[:model]  || default_model
       @mac        = options[:mac]
+      @network    = options[:network]
     end
 
     def new?
