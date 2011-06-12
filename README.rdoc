@@ -50,7 +50,8 @@ for full API please visit http://rdoc.info/github/ohadlevy/virt
 
   puts guest.mac
 
-  guest.stop
+  guest.shutdown     # initiate a shutdown
+  guest.poweroff     # forces a shutdown
 Many more options exists, make sure checkout the api/tests
 
 ==== list of host bridges

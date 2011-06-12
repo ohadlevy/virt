@@ -46,20 +46,33 @@ module Virt
       false
     end
 
-    def stop
+    def stop(force=false)
       raise "Guest not created, can't stop" if new?
-      @domain.destroy
+      force ? @domain.destroy : @domain.shutdown
       !running?
     rescue Libvirt::Error
       # domain is not running
       true
     end
 
+    def shutdown
+      stop
+    end
+
+    def poweroff
+      stop(true)
+    end
+
     def destroy
       return true if new?
-      stop if running?
+      stop(true) if running?
       @domain = @domain.undefine
       new?
+    end
+
+    def reboot
+      raise "Guest not running, can't reboot" if new? or !running?
+      @domain.reboot
     end
 
     def uuid
