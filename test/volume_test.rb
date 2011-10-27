@@ -6,7 +6,7 @@ class Virt::VolumeTest < Test::Unit::TestCase
     hostname = "h01.sat.lab"
     uri = "qemu+ssh://root@#{hostname}/system"
     Virt.connect(uri)
-    @vol = Virt::Volume.new({:name => "mytestvol-#{Time.now}"})
+    @vol = Virt::KVM::Volume.new({:name => "mytestvol-#{Time.now}"})
   end
 
   def test_should_be_new

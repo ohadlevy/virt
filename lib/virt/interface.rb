@@ -15,21 +15,14 @@ module Virt
       mac.nil?
     end
 
-    private
+    protected
 
-    def default_device
-      @connection.host.interfaces.first
-    rescue
-      "br0"
-    end
+    # Abstracted methods
+    def default_device; end
 
-    def default_type
-      "bridge"
-    end
+    def default_type; end
 
-    def default_model
-      "virtio"
-    end
+    def default_model; end
 
   end
 end

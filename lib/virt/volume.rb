@@ -33,20 +33,13 @@ module Virt
       new?
     end
 
-    def path
-      "#{pool.path}/#{name}"
-    end
+    def path; end
 
-    private
+    protected
 
     def name= name
       raise "invalid name" if name.nil?
       @name = name
-      @name += ".img" unless name.match(/.*\.img$/)
-    end
-
-    def default_type
-      "raw"
     end
 
     def default_allocated_size
@@ -58,12 +51,14 @@ module Virt
       8
     end
 
-    def default_template_path
-      "volume.xml.erb"
-    end
-
     def fetch_volume
       @vol = pool.find_volume_by_name(name)
     end
+
+    # abstracted methods
+
+    def default_type; end
+
+    def default_template_path; end
   end
 end

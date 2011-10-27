@@ -1,11 +1,26 @@
 require 'libvirt'
 module Virt
   class Connection
-    attr_reader :connection
+    attr_reader :connection, :type
 
-    def initialize uri
-      raise("Must provide a guest to connect to") unless uri
-      @connection = Libvirt::open uri
+    def initialize uri, options = {}
+      raise("Must provide a host to connect to") unless uri
+      if uri =~ /^(esx|vpx)/
+        raise("Must provide a username and password") unless options[:username] or options[:password]
+        @connection = Libvirt::open_auth(uri, [Libvirt::CRED_AUTHNAME, Libvirt::CRED_PASSPHRASE]) do |cred|
+          # This may only be required for ESXi connections, not sure.
+          @type = "VMWare"
+          case cred['type']
+          when ::Libvirt::CRED_AUTHNAME
+            options[:username]
+          when ::Libvirt::CRED_PASSPHRASE
+            options[:password]
+          end
+        end
+      else
+        @type = "KVM"
+        @connection = Libvirt::open uri
+      end
     end
 
     def closed?
@@ -25,7 +40,14 @@ module Virt
     end
 
     def host
-      Host.new
+      case type
+      when "KVM"
+        KVM::Host.new
+      when "VMWare"
+        VMWare::Host.new
+      else
+        raise "Non supported hypervisor"
+      end
     end
 
   end

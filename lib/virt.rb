@@ -7,10 +7,12 @@ require 'virt/volume'
 require 'virt/interface'
 module Virt
 
+  autoload :KVM,    "virt/kvm"
+  autoload :VMWare, "virt/vmware"
   class << self
 
-    def connect uri
-      @connection = Virt::Connection.new uri
+    def connect uri, options = {}
+      @connection = Virt::Connection.new uri, options
     end
 
     def connection
