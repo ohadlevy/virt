@@ -12,6 +12,5 @@ module Virt::VMWare
     def default_template_path
       "vmware/guest.xml.erb"
     end
-
   end
 end

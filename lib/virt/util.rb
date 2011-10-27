@@ -1,11 +1,26 @@
 require "rexml/document"
 require 'erb'
+require 'iconv'
 
 module Virt
   module Util
     # return templated xml to be used by libvirt
     def xml
-      ERB.new(template, nil, '-').result(binding)
+      to_utf8 ERB.new(template, nil, '-').result(binding)
+    end
+
+    def to_utf8 xml
+      # convert string to UTF-8
+      ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+      valid_xml = ic.iconv(xml + ' ')[0..-2]
+    end
+
+    def to_gb bytes
+      bytes.to_i / 1073741824
+    end
+
+    def to_mb bytes
+      bytes.to_i / 1048576
     end
 
     private

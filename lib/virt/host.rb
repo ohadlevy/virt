@@ -15,6 +15,10 @@ module Virt
       {:running => running_guests, :defined => defined_guests}
     end
 
+    def version
+      connection.version
+    end
+
     def running_guests
       connection.list_domains.map do |domain|
         find_guest_by_id(domain)
@@ -52,7 +56,7 @@ module Virt
     end
 
     def find_guest_by_id id
-      id.to_a.map do |did|
+      Array(id).map do |did|
         return create_guest({:name => connection.lookup_domain_by_id(did).name})
       end
     end
