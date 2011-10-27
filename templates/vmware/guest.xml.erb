@@ -1,0 +1,48 @@
+<domain type='vmware'>
+  <name><%= name %></name>
+  <%- if uuid -%>
+  <uuid><%= uuid %></uuid>
+  <%- end -%>
+  <memory><%= memory %></memory>
+  <currentMemory><%= memory %></currentMemory>
+  <vcpu><%= vcpu %></vcpu>
+  <os>
+    <type arch='<%= arch %>'>hvm</type>
+    <boot dev='network'/>
+    <%- if volume -%>
+    <boot dev='hd'/>
+    <%- end -%>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pae/>
+  </features>
+  <clock offset='utc'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <devices>
+    <%- if volume -%>
+    <disk type='file' device='disk'>
+      <target dev='sda' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' unit='0'/>
+      <source file='<%= volume.path %>'/>
+    </disk>
+    <%- end -%>
+    <%- if interface -%>
+    <interface type='<%= interface.type %>'>
+      <%- if interface.mac -%>
+      <mac address='<%= interface.mac %>'/>
+      <%- end -%>
+      <source <%= interface.type %>='<%= interface.device %>'/>
+      <model type='<%= interface.model %>'/>
+    </interface>
+    <%- end -%>
+    <input type='mouse' bus='ps2'/>
+    <graphics type='vnc' port='-1' autoport='yes'/>
+    <video>
+      <model type='vmvga' vram='4096'/>
+    </video>
+  </devices>
+</domain>

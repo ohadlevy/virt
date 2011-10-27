@@ -15,8 +15,6 @@ module Virt
       @arch   ||= options[:arch]   || default_arch
 
       @template_path = options[:template_path] || default_template_path
-      @volume        = Volume.new options
-      @interface   ||= Interface.new options
     end
 
     def new?
@@ -91,7 +89,7 @@ module Virt
       self.name <=> other.name
     end
 
-    private
+    protected
 
     def fetch_guest
       @domain = @connection.connection.lookup_domain_by_name(name)
@@ -108,7 +106,7 @@ module Virt
       @vcpu           = document("domain/vcpu")
       @arch           = document("domain/os/type", "arch")
       @machine        = document("domain/os/type", "machine")
-      @boot_device    = document("domain/os/boot", "dev")
+      @boot_device    = document("domain/os/boot", "dev") rescue nil
 
       # do we have a NIC?
       network_type = document("domain/devices/interface", "type") rescue nil
@@ -134,8 +132,6 @@ module Virt
       "x86_64"
     end
 
-    def default_template_path
-      "guest.xml.erb"
-    end
+    def default_template_path; end
   end
 end

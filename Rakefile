@@ -29,7 +29,6 @@ Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
   test.pattern = 'test/*test*.rb'
   test.verbose = true
-  test.warning = true
 end
 
 require 'rcov/rcovtask'

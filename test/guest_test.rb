@@ -3,10 +3,10 @@ require 'test/test_helper'
 class Virt::GuestTest < Test::Unit::TestCase
 
   def setup
-    hostname = "h01.sat.lab"
+    hostname = "h02.sat.lab"
     uri = "qemu+ssh://root@#{hostname}/system"
     Virt.connect(uri)
-    @guest = Virt::Guest.new({:name => "test-host-#{Time.now.to_i}"})
+    @guest = Virt::KVM::Guest.new({:name => "test-host-#{Time.now.to_i}"})
   end
 
   def teardown
@@ -40,11 +40,11 @@ class Virt::GuestTest < Test::Unit::TestCase
   end
 
   def test_should_be_able_to_save_and_start
-    @guest = Virt::Guest.new({:name => "test-host-#{Time.now.to_i}", :device => "br180"})
+    @guest = Virt::KVM::Guest.new({:name => "test-host-#{Time.now.to_i}", :device => "br180"})
     assert @guest.volume.save
     assert @guest.save
     assert @guest.start
-    assert @guest.stop
+    assert @guest.poweroff
     assert @guest.volume.destroy
     assert @guest.destroy
   end
