@@ -10,7 +10,7 @@ module Virt::VMWare
     end
 
     def path
-      "[#{pool.name}] #{name}/#{name}.vmdk"
+      "[#{pool.name}] #{self}"
     end
 
     def name= name
@@ -18,6 +18,15 @@ module Virt::VMWare
       @name += ".vmdk" unless name.match(/.*\.vmdk$/)
     end
 
+    def to_s
+      "#{title}/#{name}"
+    end
+
+    private
+
+    def title
+      name.chomp(".vmdk")
+    end
 
   end
 end

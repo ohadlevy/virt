@@ -18,8 +18,8 @@ module Virt
           end
         end
       else
-        @connection = Libvirt::open uri
         @type = "KVM"
+        @connection = Libvirt::open uri
       end
     end
 
