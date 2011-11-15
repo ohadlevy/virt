@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{virt}
-  s.version = "0.1.0"
+  s.name = "virt"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ohad Levy"]
-  s.date = %q{2011-01-31}
-  s.description = %q{Simplied interface to use ruby the libvirt ruby library}
-  s.email = %q{ohadlevy@gmail.com}
+  s.date = "2011-11-15"
+  s.description = "Simplied interface to use ruby the libvirt ruby library"
+  s.email = "ohadlevy@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -43,11 +43,11 @@ Gem::Specification.new do |s|
     "test/volume_test.rb",
     "virt.gemspec"
   ]
-  s.homepage = %q{https://github.com/ohadlevy/virt}
+  s.homepage = "https://github.com/ohadlevy/virt"
   s.licenses = ["GPLv3"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Simple to use ruby interface to libvirt}
+  s.rubygems_version = "1.7.2"
+  s.summary = "Simple to use ruby interface to libvirt"
   s.test_files = [
     "test/connection_test.rb",
     "test/guest_test.rb",
@@ -59,7 +59,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
