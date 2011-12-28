@@ -8,6 +8,10 @@ module Virt
       ERB.new(template, nil, '-').result(binding)
     end
 
+    def to_gb bytes
+      bytes.to_i / 1073741824
+    end
+
     private
     # template file that contain our xml template
     def template
