@@ -77,10 +77,6 @@ module Virt
       @domain.uuid unless new?
     end
 
-    def arch= value
-      @arch = value == "i386" ? "i686" : value
-    end
-
     def to_s
       name.to_s
     end

@@ -7,6 +7,11 @@ module Virt::KVM
       @interface   ||= Interface.new options
     end
 
+    def arch= value
+      @arch = value == "i386" ? "i686" : value
+    end
+
+
     protected
 
     def default_template_path
