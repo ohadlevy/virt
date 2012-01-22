@@ -1,4 +1,5 @@
 source "http://rubygems.org"
+gem "ruby-libvirt" # to remove once upgrading vir to 0.3
 
 group :development do
   gem "shoulda", ">= 2.11.3"
